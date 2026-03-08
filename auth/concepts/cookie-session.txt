@@ -1,0 +1,10 @@
+Cookie session will allow us to store the required data to manage some data to avoid the back-end data store that is help full. 
+
+But let's say if we enable the cookie encryption , then it will cause some problem for to use it in other services which have different languages.
+
+there will be some encryption , so we need to check weather the other langues should or have the same encrypton as well. 
+
+contents of the cookie should be understood of by the many services. 
+
+=> we will not encrypt the cookie contents. => Remember , JWT's are tamper resistant. You can encrypt the cookie contents if this is a big deal to you. 
+

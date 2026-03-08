@@ -1,0 +1,21 @@
+browser[] => Request => Server. 
+Server => Response(Optionally can add a Response of set Cookie , for the setCookie header it can provide some kind of value) => Browser.(Stored inside browser)
+
+When the browser make the request to the same domine with thte same port along the request this cookie will be sent to the server.
+
+This information can be anything. 
+
+payload => {userId: '', favoriteColor:'red'} => JWT Creation Algorithm => JWT(Some string unable to read. )
+
+
+Cookies vs JWT's
+
+Cookies 
+    * Transport mechanism 
+    * Moves any kind of data between browser and server. 
+    * Automatically managed by the browser. 
+
+JWT's 
+    * Authentication/ Authorization mechanism. 
+    * Stores any data we want. 
+    * We have to manage it manually. 

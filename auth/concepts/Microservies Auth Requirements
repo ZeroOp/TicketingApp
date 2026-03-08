@@ -1,0 +1,130 @@
+Cookie based authentication. 
+
+This cookie will store some kind of encoded infromation inside it. 
+
+[request : [body , cookie or JWT]] => [OrderService] 
+
+Implies that the auth mechanism will tell us details about this person. 
+
+Admin User
+
+Request to create a Free Coupon {
+    ticket: '123434',
+    JWK, Cookie, ETC
+}
+We need to check weather this person is autherized to create a coupon or not. 
+
+
+Auth mechanism need to include some kind of more infor. 
+
+
+User ABC => Auth Service
+User ABC <= AuthServer
+
+
+ReactApp => AuthService [Express + express-validator]
+
+ReactApp => OderService [Ruby on Rails]
+
+ReactApp => Payments Service[JavaScpring]
+
+
+Implies that the auth mechanism must be easilyu understood by many languages. 
+
+Implies that the auth mechanism should't require some kiknd of backing data store on theserver. 
+
+
+Requirements for auth mechanism. 
+
+    * Must be able to tell us details about a user.
+    * Must be able to handle authorization info. (*Weather this user is admin or user or something else. )
+    * Must have a built-in , tamper-resistant way to expire or invalidate itself.(User should not modify these data, if they do that should be automatically should be invalid)
+    * Must be easily understood between languagesd
+    * Must not require some kind of backing data store on the server. 
+
+    Cookie expiration handled by the browser. we asked the browser to expire it for 20 days , user can copy that cookie information and ignore the cookie expiration date and continues to use the same cookie beyond the expiration date. 
+
+    JWT token will encode the expiration in the token itself. As soon as the jwt expire that is done. 
+
+    JWT has better support for many languages. for handling JWT tokens. 
+
+    There are lot of technologies or tools we can use in Node world , but using the same on different language could be hard. 
+
+    JWT do not required us to indentify the user using some kind of backind data store. 
+    Cokkie based authenticatoin we need to store some kind of session id , in the services which we are using. (which again we do not want to use). 
+
+
+    JWT is just a authentication mechanism that modifies the data and proves weather the user is authenticated or not. 
+
+    We still need to communicate this information from the browser. 
+
+    We can either do this manually at a degree.
+
+    We are going to use the JWT to store the JSOn auth mechanism but the cookie will be the transport mechanism. 
+
+    We still need to decide how we wil move this token using cookie. 
+
+
+
+A normal react application works. 
+
+user types ticketing.dev => get request => React application [HTML files with some script tags]. 
+
+those files will be loaded by the browser. 
+
+Browser see all those script files And it will make a followup request to the back end server and will get the JS files. to boot up the react application on browser. 
+
+Then again we might need to make some request to get the data again to the server. 
+
+
+React app can make the request to order service. 
+
+
+React will take that info and bootup the application this is the normal flow of a react application. 
+
+At what point of time we need to check to authenticate the user. 
+
+We don't really need to know when to check the HTML or js files. 
+
+There are some kind of senarios we need to check for that as well. 
+
+But for most part , we need to check this flow when they asks the data. 
+
+For a normal react application, when the application makes request to the api to load the data that is the soonest point where we need to check 
+weather the user is autherized or not. 
+
+We need to add the JWT data at this point. 
+
+This can be added in any header or body of request or inside a cookie as well. 
+
+
+
+We are not building a react application , we are building a server side application. 
+
+
+[browser] => request [client[nextJs]] => communicate with services. 
+
+the client will return fully rendered HTML file with content. 
+
+It will send the all the html content with alredy , now the browser don't need to make any html files request and then JS file rerquest and then the
+
+api call to get the data. 
+
+We are doing server side approach to optimize the SEO purpose (Search engine optimization) and the page load time if the user have the old device. 
+
+so this client will make the request to orderservice or ticketing service or what ever it may be. 
+
+We need to know the authentication infromation from the first request. 
+
+We need the authorization header or token in body or cookie with JWT token in the header from the first request. 
+
+This is a big issue. 
+
+When we type google.com. Google have no authority to run any javascript code in your computer. Before sending you an HTML files. 
+
+First you will get some html files. Then inside that code there will be some JS files then the js files will be load then the data will be loaded. 
+
+then google will will handle the tokens. We can't execute the javascript code at the stating starting stage. 
+
+Server side rendering . won't be happened. 
+
