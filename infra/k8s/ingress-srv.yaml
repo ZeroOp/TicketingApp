@@ -14,6 +14,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: auth-svc
+                name: auth-srv
                 port:
                   number: 3000
