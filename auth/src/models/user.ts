@@ -31,6 +31,16 @@ const userSchema = new mongoose.Schema({
         type: String, 
         required: true
     }
+}, {
+    // here we are doing just transforming the data before sending it to the client to maintain consistancy to all the services. 
+    toJSON : {
+        transform(doc, ret: any) {
+            ret.id = ret._id;
+            delete ret._id;
+            delete ret.password;
+            delete ret.__v;
+        }
+    }
 });
 
 userSchema.pre('save', async function() {
