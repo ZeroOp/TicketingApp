@@ -1,0 +1,122 @@
+There is no perfect solutions for this problem in microservices app. 
+
+Option 1:
+[
+ req : {
+    body: {},
+    token : {JWT, Cookie, ETC}
+ }
+]
+
+when the requests hits to the current service we can rely or depend on the auth service and make a sync call. 
+
+Auth servicer logic to inspect JWT/Cookie and decide if user is authenticated or not. 
+
+Here direct request to another service. 
+
+The down side has the similar to the synchrous approach down sides . 
+
+What happens if the authentication service is down. 
+
+Then whole system will go down. No service don't know weather a person is logged in or not. 
+
+Auth request will allways fail when auth service goes down. 
+
+Next option 1.1. 
+
+between the request and needed service like order service keep the auth service in between. 
+
+Request => AuthService => OrderService. 
+
+Here also the problem is same. Because we are relying on the auth service. 
+
+
+
+Option 2: 
+
+We are goint to teach each service weather the user is authenticated or not. 
+
+Req => OrderSerice[Logic to inspect JWT/Cookie and decide if user is authenticated ? ]
+
+Here no dependency on the outside sources. Everything is wrapped inside one single service. 
+
+Upside:
+   no dependency
+   faster
+Downside:
+   * We end up duplicating the same logic across all the services . (checking logic).(That is not a big deal we can move this authentication logic into another
+   shared library that used among all the services. ) (duplication is not problem).
+   
+
+Huge down sides to Option 2:
+
+Lest imagine user ABC comes to signin. 
+
+
+User ABC =>Req [body: {email, password}] => AuthService[ Email good? Password good? , yes? great. Here's a token to idendify you. Include it on all followup requests ].
+
+Auth service => JWT, Cookie , whatever => UserABC. 
+
+
+UserABC => OrderService[ ] since the user is logged in they can purchase a ticket. No communication service. 
+
+
+What might happened after userABC got the token. 
+
+AdminUser => Request to BAN a User['id' : 'UserABC'] => Auth service [ User Management Logic [ Ban UserABC ? Ok , i will update the database ] ] => Auth MongoDB[ {id: 'UserABC' : hasAccess : true}]
+
+One part of our applciatoin is saying UserABC is banned, but the other services don't even know about the banned user. 
+
+So if the userABC makes another follow up request to the Orderservice, we want to revoke the request but order service don't know. 
+
+UserABC is authenticated. 
+
+That the core issue with this approach. 
+
+Lets go with second option. (We can have some sync communication as well). 
+
+(How will you solve the security problem).
+
+
+Here we are not building the strategy to fix the above problem it is a tremendous amount of work. 
+
+UserABC => AuthService[signIn Login[]] =>JWT, COOKie , whatever that is only good for 15 minute => UserABC. 
+
+This token is only work for 15min. So after 15min it will expire. 
+
+UserABC => OrderService [JWT/Cookie and decide if user is authenticsated. If JWT/Cookie is older than 30mins , reach to auth service] => AuthService. 
+
+When the user token is expired then there are two ways , Order service can have a new fresh token , response from the overall request. 
+We can send the new token. 
+
+The other strategy is we will just reject the over all request . We can tell our client to go to authentication service and refresh the token on their own. 
+
+This will the issue. 
+
+Still we have a window here of 15 min , even if we ban a user they will make a request. This is where we want to do some trade offs. 
+
+
+If this is a critical app we can bring that time down from 15min to 5 min or even 1min. 
+
+If there is more secure app ; 
+
+Then what we should do is 
+
+When admin makes a banned request to to auth service . 
+
+AdminUser => AuthService => mongDB. 
+
+in auth service we will broadcast the event called userBanned. 
+
+then event will be sent of to all our different services. 
+
+Each service will store that information in short live storage or cache because we don't want to store that information for the eterntity.
+
+Users will be banned and unbanned right. 
+
+The duration of the data here should be again 15min. 
+
+Because Post that token is anyway invalid. 
+
+
+***** We are taking the banned user risk here. in this applicaton it is not required it will be complex.
