@@ -35,7 +35,7 @@ router.post('/api/users/signin',
             throw new BadRequestError('Invalid credentials');
         }
         const userJWT = jwt.sign({
-            id: existingUser,
+            id: existingUser.id,
             email: existingUser.email
         }, process.env.JWT_KEY!);
         // Store it on session Object
