@@ -1,30 +1,39 @@
-import axios from 'axios' // we can't use use-request because it is a hook. 
+// import axios from 'axios' // we can't use use-request because it is a hook. 
 // that hook can only be used inside a react compoennt. 
 // getInitialProps is not a hook , it is a plain compoennt. 
+
+//  now we don't need the axios anymore we can use buildClient
+import buildClient from "../api/build-client";
 const LandingPage = ({ currentUser }) => {
     console.log(currentUser);
     return <h1>LandingPage</h1>
 }
 
-LandingPage.getInitialProps = async ({req}) => {
+LandingPage.getInitialProps = async (context) => {
     // req will be passed to the next.js 
-    if (typeof window === 'undefined') {
-        // we are on the server!
-        // request should be made to http://ingress
-        const { data } = await axios.get(
-            'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api/users/currentuser', {
-                headers: req.headers
-            }
-        );
+    // if (typeof window === 'undefined') {
+    //     // we are on the server!
+    //     // request should be made to http://ingress
+    //     const { data } = await axios.get(
+    //         'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api/users/currentuser', {
+    //             headers: req.headers
+    //         }
+    //     );
 
-        return data;
-    }
-    else { 
-        // we are on the browser
-        // request can be made with a base url of ''
-        const {data} = await axios('/api/users/currentuser');
-        return data;
-    }
+    //     return data;
+    // }
+    // else { 
+    //     // we are on the browser
+    //     // request can be made with a base url of ''
+    //     const {data} = await axios('/api/users/currentuser');
+    //     return data;
+    // }
+
+    // no need to do anything from above 
+    const client = buildClient(context);
+    const { data } = await client.get('./api/users/currentuser');
+
+    return data;
 };
 
 export default LandingPage;
