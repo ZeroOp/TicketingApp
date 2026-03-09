@@ -1,0 +1,23 @@
+* Test a single pieace of code in isolation => something like single middleware (UNIT Test)
+* Test how differnt pieces of code work together => Simulate a request flowing through some of the middlewares of to some route handler. 
+* Test how multiple components work together => Something like how our auth service interact with mongoDB. Or how it interacts with event bus. 
+* Test differnt services work together. Something like when orderservice emmit an event how does that flow to the ticketing service. 
+
+
+Testing Goals. 
+
+Test goal 1: Basic request handling. 
+
+Testing goal 2: Some tests around models (unit tests).
+
+Testing goal 3: Reciving and emmiting events.(incoming and outgoing events). 
+We won't launch order service and ticketing service at the same time. But if we test the events of one service emmiting and reciving we are going at the 
+same goal. 
+
+How to execute these tests? 
+Run all tests directly at the terminal. No docker no kubernetes. 
+
+npm run test. 
+
+Sometime in future we will be running some test where we need some kind of pirticular operating system , some very complex hard to run application. 
+

@@ -1,0 +1,46 @@
+npm run test => some test runner is used called Jest; 
+
+Jest do. 
+
+* start in-memory copy of MongoDB. 
+* start up our express app. 
+* Use supertest library to make fake requests to our express app.  (https://www.npmjs.com/package/supertest)
+* Run assertions to make sure the request did the right thing. 
+
+we will pass this express app to the supertest library. 
+
+we are creating our application in index.js. 
+
+index.jsexpress app alredy listening on port 3000. => Test files[ Code to test app with supertest].
+
+There are some hard coded stuff in index.js like connect to mongodb. 
+
+We automatically start listening to port 3000. 
+
+We might want to run some test at the same time on auth serice and order service. 
+
+Both services might be running on the same port.
+
+If we try to required index.js from the same files. we will get the errors. 
+
+supertest will pick the random port which is available in our system. 
+
+index.js we should not listen on port 3000 automatically. 
+
+split index.js into two differnt files. 
+
+indext.js 
+[code to start up the app and listen on port 3000] executed only when we want to run our app in a dev/prod environment. 
+
+app.js
+[Express app is not going to listening on any port.]
+
+we will export our app into test file 
+
+Code to test app with supertest. 
+
+index.js we will have some code to start up our app. 
+
+When we start up our server we will execute the index.js. 
+
+we have separate file to export the application. 
