@@ -44,3 +44,6 @@ index.js we will have some code to start up our app.
 When we start up our server we will execute the index.js. 
 
 we have separate file to export the application. 
+
+run this command on 
+npm install --save-dev @types/jest @types/supertest jest ts-jest supertest mongodb-memory-server

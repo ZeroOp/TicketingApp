@@ -15,7 +15,7 @@ app.use(json());
 app.use(
   cookieSession({
     signed: false,
-    secure: true
+    secure: true  // in a test env we can make this false. 
   })
 )
 
