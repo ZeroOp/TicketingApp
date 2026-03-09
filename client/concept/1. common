@@ -1,0 +1,7 @@
+in next wes should create a folder called pages. 
+Here file names map up to the route names. 
+in package.json file we need to add a script called 
+{
+    "dev": "next"
+}
+now if we start npm dev that should start our next.js client.
