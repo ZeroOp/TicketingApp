@@ -13,6 +13,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: src  # matches WORKDIR/src in Dockerfile
+    - image: zeroop/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.ts'
+            dest: .
 
 deploy:
   kubectl:
