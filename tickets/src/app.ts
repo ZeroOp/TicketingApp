@@ -4,6 +4,7 @@ import { json } from 'body-parser';
 import cookieSession from 'cookie-session'
 import { currentUser, errorHandler, NotFoundError } from '@zeroop-dev/common';
 import { createTicketRouter } from './routes/new';
+import { showTicketRouter } from './routes/show';
 
 const app = express();
 app.set('trust proxy', true);
@@ -17,6 +18,7 @@ app.use(
 
 app.use(currentUser); // we have added the current user middle ware to the application every single route in this project will be havingt this currenUser middleware ran in advance
 
+app.use(showTicketRouter)
 app.use(createTicketRouter)
 // any route which is not found we are throughing the same error which is in the customError Format. 
 // made all the errors in the same format to make the client understand easily
