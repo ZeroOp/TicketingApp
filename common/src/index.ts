@@ -7,7 +7,7 @@ export interface Color {
 
 // give the constant a less‑generic name if you like
 const defaultColor: Color = {
-    red: 10,
+    red: 20,
     blue: 10,
     green: 10
 };
