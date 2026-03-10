@@ -1,0 +1,22 @@
+{
+  "name": "@zeroop-dev/common",
+  "version": "1.0.0",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build/**/*"
+  ],
+  "scripts": {
+    "clean": "del-cli build",
+    "build": "npm run clean && tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "devDependencies": {
+    "del-cli": "^7.0.0",
+    "typescript": "^5.9.3"
+  }
+}
