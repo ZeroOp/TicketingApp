@@ -2,7 +2,7 @@ import express from 'express';
 import { json } from 'body-parser';
 
 import cookieSession from 'cookie-session'
-import { errorHandler, NotFoundError } from '@zeroop-dev/common';
+import { currentUser, errorHandler, NotFoundError } from '@zeroop-dev/common';
 import { createTicketRouter } from './routes/new';
 
 const app = express();
@@ -14,6 +14,8 @@ app.use(
     secure: false  // in a test env we can make this false. 
   })
 )
+
+app.use(currentUser); // we have added the current user middle ware to the application every single route in this project will be havingt this currenUser middleware ran in advance
 
 app.use(createTicketRouter)
 // any route which is not found we are throughing the same error which is in the customError Format. 
