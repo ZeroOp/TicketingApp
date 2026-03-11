@@ -6,6 +6,7 @@ import { currentUser, errorHandler, NotFoundError } from '@zeroop-dev/common';
 import { createTicketRouter } from './routes/new';
 import { showTicketRouter } from './routes/show';
 import { indexTicketRouter } from './routes';
+import { updateTicketRouter } from './routes/update';
 
 const app = express();
 app.set('trust proxy', true);
@@ -22,6 +23,7 @@ app.use(currentUser); // we have added the current user middle ware to the appli
 app.use(showTicketRouter)
 app.use(createTicketRouter)
 app.use(indexTicketRouter)
+app.use(updateTicketRouter)
 // any route which is not found we are throughing the same error which is in the customError Format. 
 // made all the errors in the same format to make the client understand easily
 // if we have the async function then we need to use the next callback function like next(new NotFoundError()) instaead of using the throw new NotFoundError()

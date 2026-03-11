@@ -23,4 +23,5 @@ it('can fetch a list of tickets', async ()=>{
         .expect(200)
     
         expect(response.body.length).toEqual(3);
+        
 })
