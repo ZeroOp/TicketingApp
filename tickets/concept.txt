@@ -1,0 +1,33 @@
+We Now neede the nats client that to setup the publishers and consumers. We might think to connect it in the index.ts that makes more sense. 
+
+There is a distinction between NATs client and the Mongoose. 
+
+Mongoose internally keeps the record of all the internal connections that are in use. 
+
+We can open any other file in our project and can import the mongoose. 
+
+Natstreaming directory works very differntly. 
+
+when we use nats.connect it will give us instance. We might need to share that instance across all files in our repository. 
+
+mongoose internally make the connection. 
+
+But that is an issue because our TicketCreatedRouteHandler is imported in app.ts which is again imported into index.ts. 
+
+We need create the nats client and we need to export that and import into ticketCreatedRoute Hanlder. 
+
+Now we are creating a loop here. 
+
+index requires TicketCreatedRouteHandler. And TicketCreatedRouteHandler Needs Nats client from index.ts which will create a circtular dependency. 
+
+So we need create a nats-client in index.ts but that should be imported in TicketCreatedRouteHandler but not from the index.ts .
+
+How to solve this? 
+
+Create a new file called nats-client.ts 
+
+It will be single source something like mongoose. 
+
+Index.ts file will import that and connect to the nats-client.ts. 
+
+We will initialize the natsclient in index.ts but we might need to import that initialized file into TicketCreatedRouteHandler. 
