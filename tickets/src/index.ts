@@ -13,6 +13,16 @@ const start = async () => {
   
   try {
     await natsWrapper.connect('ticketing', 'alsdkjfdsa', 'http://nats-srv:4222')
+
+    // better to have it inside the central located file. 
+    natsWrapper.client.on('close', () => {
+        console.log("NATS connection closed!");
+        process.exit();
+    })
+
+    process.on('SIGINT', ()=> natsWrapper.client.close());
+    process.on('SIGTERM', ()=> natsWrapper.client.close());
+
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
   }

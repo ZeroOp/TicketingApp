@@ -34,3 +34,6 @@ stan.on('connect',async () => {
     }
 
 });
+
+process.on('SIGINT', ()=> stan.close());
+process.on('SIGTERM', ()=> stan.close());
