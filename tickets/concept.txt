@@ -31,3 +31,22 @@ It will be single source something like mongoose.
 Index.ts file will import that and connect to the nats-client.ts. 
 
 We will initialize the natsclient in index.ts but we might need to import that initialized file into TicketCreatedRouteHandler. 
+
+
+Se cann't wait for the vent bus to send event to event bus because that can be failed at some or other point of time. 
+
+what we can do is we can store that event into some kind of database . Transactions database which having events collection. 
+
+We have Sent flag and Events in the database. 
+
+And we can have a separate code/process watching events .that code will take the events from the events collection and publish that event to NATS.
+
+If there is any issue with connecting to our database , then we fail to make the transaction to the transaction database as well. 
+
+If connection to the nats is down for some point of time , when the nats connection comes back , hopefully our events will be sent to the nats server eventually. 
+
+We need to make sure if we make the changes transactions collection will be updated only if the events collection is updated. And vice versa. We need to make sure that if any one of this query fails. 
+
+We need to revert whole transaction. 
+
+We need to roll back. 
