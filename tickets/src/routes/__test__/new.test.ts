@@ -1,8 +1,6 @@
 import request from 'supertest'
 import { app } from '../../app'
 import { Ticket } from '../../models/ticket'
-import { response } from 'express';
-import { title } from 'node:process';
 
 it('has a route handler listening to /api/tickets for post requests' , async () => {
     const response = await request(app)
