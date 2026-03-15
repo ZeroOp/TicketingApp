@@ -29,6 +29,14 @@ build:
         manual:
           - src: '**/*.ts'
             dest: .
+    - image: zeroop/orders
+      context: orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.ts'
+            dest: .
 
 deploy:
   kubectl:
