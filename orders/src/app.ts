@@ -3,10 +3,10 @@ import { json } from 'body-parser';
 
 import cookieSession from 'cookie-session'
 import { currentUser, errorHandler, NotFoundError } from '@zeroop-dev/common';
-import { createTicketRouter } from './routes/new';
-import { showTicketRouter } from './routes/show';
-import { indexTicketRouter } from './routes';
-import { updateTicketRouter } from './routes/update';
+import { deleteOrderRouter } from './routes/delete';
+import { newOrderRouter } from './routes/new';
+import { indexOrderRouter } from './routes';
+import { showOrderRouter } from './routes/show';
 
 const app = express();
 app.set('trust proxy', true);
@@ -20,10 +20,10 @@ app.use(
 
 app.use(currentUser); // we have added the current user middle ware to the application every single route in this project will be havingt this currenUser middleware ran in advance
 
-app.use(showTicketRouter)
-app.use(createTicketRouter)
-app.use(indexTicketRouter)
-app.use(updateTicketRouter)
+app.use(deleteOrderRouter)
+app.use(indexOrderRouter)
+app.use(newOrderRouter)
+app.use(showOrderRouter)
 // any route which is not found we are throughing the same error which is in the customError Format. 
 // made all the errors in the same format to make the client understand easily
 // if we have the async function then we need to use the next callback function like next(new NotFoundError()) instaead of using the throw new NotFoundError()
