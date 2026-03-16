@@ -14,6 +14,7 @@ interface OrderDoc extends mongoose.Document {
     status: OrderStatus,
     expiresAt: Date;
     ticket: TicketDoc;
+    id: string;
 }
 
 
