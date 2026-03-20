@@ -1,9 +1,6 @@
 import  mongoose  from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
-import { TicketCreatedListner } from './events/listeners/ticket-created-listener';
-import { TicketUpdatedListner } from './events/listeners/ticket-updated-listner';
-import { ExpirationCompleteListner } from './events/listeners/expiration-complete-listner';
 const start = async () => {
 
   if (!process.env.JWT_KEY) {
@@ -38,10 +35,6 @@ const start = async () => {
         console.log("NATS connection closed!");
         process.exit();
     })
-
-    new TicketCreatedListner(natsWrapper.client).listen()
-    new TicketUpdatedListner(natsWrapper.client).listen()
-    new ExpirationCompleteListner(natsWrapper.client).listen()
 
     process.on('SIGINT', ()=> natsWrapper.client.close());
     process.on('SIGTERM', ()=> natsWrapper.client.close());
