@@ -15,6 +15,7 @@ interface OrderDoc extends mongoose.Document {
     expiresAt: Date;
     ticket: TicketDoc;
     id: string;
+    version: number
 }
 
 
@@ -48,6 +49,9 @@ const orderSchema = new mongoose.Schema({
         }
     }
 })
+
+orderSchema.set('versionKey', 'version');
+orderSchema.set('optimisticConcurrency', true);
 
 orderSchema.statics.build = (attrs: OrderAttrs) => {
     return new Order(attrs);
