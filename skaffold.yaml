@@ -37,6 +37,14 @@ build:
         manual:
           - src: '**/*.ts'
             dest: .
+    - image: zeroop/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.ts'
+            dest: .
 
 deploy:
   kubectl:
