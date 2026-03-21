@@ -5,14 +5,35 @@ on:
       - main
     paths:
       - 'auth/**'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout code
       - uses: actions/checkout@v2
+
+      # Step 2: Build Docker image
       - run: cd auth && docker build -t zeroop/auth .
+
+      # Step 3: Login to Docker Hub
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 4: Push Docker image
       - run: docker push zeroop/auth
+
+      # Step 5: Configure AWS credentials
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1   # change if your cluster is in a different region
+
+      # Step 6: Update kubeconfig to talk to your EKS cluster
+      - run: aws eks update-kubeconfig --name zeroop-eks-cluster --region ap-south-1
+
+      # Step 7: Apply Kubernetes manifests
+      - run: kubectl rollout restart deployment auth-depl
