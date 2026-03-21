@@ -58,3 +58,4 @@ deploy:
   kubectl:
     manifests:
       - ./infra/k8s/*   # your Deployment/Service manifests
+      - ./infra/k8s-dev/*
