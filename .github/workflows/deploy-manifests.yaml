@@ -20,6 +20,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1  
 
-      - run: aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
+      # Step 3: Update kubeconfig and set context
+      - run: |
+          aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1 --alias zeroop-eks
+          kubectl config use-context zeroop-eks
+          kubectl get nodes
 
-      - run: kubectl apply -f infra/k8s --validate=false && kubectl apply -f infra/k8s-prod --validate=false
+      # Step 4: Apply manifests
+      - run: |
+          kubectl apply -f infra/k8s --validate=false
+          kubectl apply -f infra/k8s-prod --validate=false
