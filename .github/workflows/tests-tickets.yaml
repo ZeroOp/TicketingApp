@@ -3,16 +3,7 @@ name: tests-tickets
 on:
   pull_request:
     paths:
-      - 'tickets/**'
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: cd auth && npm install && npm run test:ciname: tests-auth
-
-on:
-  pull_request:
+      - 'payments/**'
 
 jobs:
   build:
