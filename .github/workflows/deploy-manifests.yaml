@@ -1,5 +1,6 @@
 name: deploy-manifests
-on: 
+
+on:
   push:
     branches:
       - main
@@ -11,22 +12,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout code
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       # Step 2: Configure AWS credentials
-      - uses: aws-actions/configure-aws-credentials@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1  
+          aws-region: ap-south-1
 
       # Step 3: Update kubeconfig and set context
-      - run: |
+      - name: Configure kubectl for EKS
+        run: |
           aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1 --alias zeroop-eks
           kubectl config use-context zeroop-eks
+          echo "Checking connectivity to cluster..."
           kubectl get nodes
 
       # Step 4: Apply manifests
-      - run: |
+      - name: Apply Kubernetes manifests
+        run: |
+          echo "Applying infra/k8s manifests..."
           kubectl apply -f infra/k8s --validate=false
+          echo "Applying infra/k8s-prod manifests..."
           kubectl apply -f infra/k8s-prod --validate=false
