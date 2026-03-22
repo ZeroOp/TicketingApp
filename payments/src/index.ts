@@ -4,7 +4,7 @@ import { natsWrapper } from './nats-wrapper';
 import { OrderCreatedListner } from './events/listners/order-created-listener';
 import { OrderCancelledListner } from './events/listners/order-cancelled-listener';
 const start = async () => {
-
+  console.log('......')
   if (!process.env.JWT_KEY) {
     throw new Error('JWT_KEY must be defined');
   }
