@@ -1,6 +1,6 @@
 name: deploy-manifests
 
-on: 
+on:
   push:
     branches:
       - main
@@ -29,16 +29,24 @@ jobs:
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
 
-      # Step 5: Verify access to cluster
+      # Step 5: Generate a valid token and inject into kubectl (fix IAM auth)
+      - name: Inject token for kubectl
+        run: |
+          TOKEN=$(aws eks get-token --cluster-name zeroop-eks-cluster-v2 --region ap-south-1 | jq -r '.status.token')
+          CONTEXT=$(kubectl config get-contexts -o name | grep zeroop-eks-cluster-v2)
+          kubectl config set-credentials github-actions --token=$TOKEN
+          kubectl config use-context $CONTEXT
+
+      # Step 6: Verify cluster access
       - name: Verify cluster access
         run: kubectl get nodes
 
-      # Step 6: Apply Kubernetes manifests
+      # Step 7: Apply Kubernetes manifests
       - name: Apply manifests
         run: |
           kubectl apply -f infra/k8s --validate=false
           kubectl apply -f infra/k8s-prod --validate=false
 
-      # Optional: Check all pods
+      # Optional Step 8: Check all pods to ensure deployment
       - name: Check pods
         run: kubectl get pods --all-namespaces
