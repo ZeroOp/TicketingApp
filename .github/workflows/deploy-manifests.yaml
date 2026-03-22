@@ -11,11 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout code (Updated to v4)
+      # Step 1: Checkout the code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Configure AWS credentials (Updated to v4)
+      # Step 2: Configure AWS credentials
+      # Ensure secrets.AWS_ACCESS_KEY_ID belongs to the 'ZeroopKubernetes' user
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -23,17 +24,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1  
 
-      # Step 3: Update Kubeconfig to talk to EKS
+      # Step 3: Verify which IAM user is actually being used (CRITICAL DEBUG)
+      - name: Debug IAM Identity
+        run: aws sts get-caller-identity
+
+      # Step 4: Update Kubeconfig to talk to your EKS cluster
       - name: Update Kubeconfig
         run: |
           aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
 
-      # Step 4: Verify Authentication (Helpful for debugging)
+      # Step 5: Test the connection to the cluster
       - name: Verify Cluster Connection
         run: |
-          kubectl get nodes || (echo "FAILED: Cannot connect to EKS. Check IAM permissions." && exit 1)
+          kubectl get nodes || (echo "FAILED: Still getting credential error. Check if 'EKS API' mode is enabled in AWS Console." && exit 1)
 
-      # Step 5: Apply Manifests
+      # Step 6: Apply the Kubernetes manifests
       - name: Deploy Manifests
         run: |
           kubectl apply -f infra/k8s/
