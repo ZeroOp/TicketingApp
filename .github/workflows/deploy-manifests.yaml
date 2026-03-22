@@ -10,43 +10,46 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      # Step 1: Checkout code
-      - uses: actions/checkout@v3
+      # Step 1: Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       # Step 2: Configure AWS credentials
-      - uses: aws-actions/configure-aws-credentials@v2
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1  
 
-      # Step 3: Set KUBECONFIG env variable
+      # Step 3: Set KUBECONFIG env
       - name: Set KUBECONFIG
         run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-      # Step 4: Update kubeconfig for EKS cluster
-      - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
-
-      # Step 5: Generate a valid token and inject into kubectl (fix IAM auth)
-      - name: Inject token for kubectl
+      # Step 4: Generate kubeconfig and AWS IAM token for kubectl
+      - name: Generate kubeconfig and token
         run: |
+          # Update kubeconfig for EKS cluster
+          aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
+
+          # Generate short-lived token
           TOKEN=$(aws eks get-token --cluster-name zeroop-eks-cluster-v2 --region ap-south-1 | jq -r '.status.token')
-          CONTEXT=$(kubectl config get-contexts -o name | grep zeroop-eks-cluster-v2)
+
+          # Set kubectl credentials using the token
           kubectl config set-credentials github-actions --token=$TOKEN
+
+          # Use the context for your cluster
+          CONTEXT=$(kubectl config get-contexts -o name | grep zeroop-eks-cluster-v2)
           kubectl config use-context $CONTEXT
 
-      # Step 6: Verify cluster access
-      - name: Verify cluster access
+      # Step 5: Verify access
+      - name: Verify kubectl access
         run: kubectl get nodes
 
-      # Step 7: Apply Kubernetes manifests
-      - name: Apply manifests
+      # Step 6: Apply manifests
+      - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f infra/k8s --validate=false
           kubectl apply -f infra/k8s-prod --validate=false
-
-      # Optional Step 8: Check all pods to ensure deployment
-      - name: Check pods
-        run: kubectl get pods --all-namespaces
