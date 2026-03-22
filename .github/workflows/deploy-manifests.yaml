@@ -1,4 +1,5 @@
 name: deploy-manifests
+
 on: 
   push:
     branches:
@@ -7,7 +8,7 @@ on:
       - 'infra/**'
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout code
@@ -20,8 +21,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1  
 
-      - run: aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
+      # Step 3: Update kubeconfig and set KUBECONFIG env
+      - run: |
+          aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
+          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-      - run: kubectl apply -f infra/k8s --validate=false
-      
-      - run: kubectl apply -f infra/k8s-prod --validate=false
+      # Step 4: Apply manifests without validation (avoids OpenAPI errors)
+      - run: |
+          kubectl apply -f infra/k8s --validate=false
+          kubectl apply -f infra/k8s-prod --validate=false
+
+      # Optional: verify pods are running
+      - run: kubectl get pods --all-namespaces
