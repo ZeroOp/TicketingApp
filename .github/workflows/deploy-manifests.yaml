@@ -11,34 +11,28 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1
+          aws-region: ap-south-1  
 
-      - name: Install kubectl (optional, ensure latest)
-        run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
+      - name: Set KUBECONFIG
+        run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-      - name: Update kubeconfig and set env
+      - name: Generate kubeconfig + token
         run: |
           aws eks update-kubeconfig --name zeroop-eks-cluster-v2 --region ap-south-1
-          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+          TOKEN=$(aws eks get-token --cluster-name zeroop-eks-cluster-v2 --region ap-south-1 | jq -r '.status.token')
+          kubectl config set-credentials github-actions --token=$TOKEN
+          kubectl config use-context arn:aws:eks:ap-south-1:<ACCOUNT_ID>:cluster/zeroop-eks-cluster-v2
 
-      - name: Verify access to cluster
+      - name: Verify access
         run: kubectl get nodes
 
       - name: Apply manifests
         run: |
           kubectl apply -f infra/k8s --validate=false
           kubectl apply -f infra/k8s-prod --validate=false
-
-      - name: Check all pods
-        run: kubectl get pods --all-namespaces
